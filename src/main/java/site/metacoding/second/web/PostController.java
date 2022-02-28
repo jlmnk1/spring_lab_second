@@ -1,56 +1,51 @@
 package site.metacoding.second.web;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import java.util.List;
 
-@RestController
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import site.metacoding.second.domain.Post;
+
+// View (글 쓰기 페이지, 글 목록 페이지, 글 상세보기 페이지)
+@Controller
 public class PostController {
 
-    // 구체적으로 뭘 달라고 요청 - body X
-    @GetMapping("/post/{id}")
-    public String get(@PathVariable int id) {
-        return "주세요 id : " + id;
+    @GetMapping("/post/writeForm")
+    public String writeForm() {
+        return "post/writeForm";
     }
 
-    // 구체적으로 뭘 달라고 요청 - body X
-    // http://localhost:8000/post?title=내용
+    @GetMapping("/post/list")
+    public String list(Model model) {
+        Post post1 = new Post(1, "제목1", "내용1");
+        Post post2 = new Post(2, "제목2", "내용2");
+        Post post3 = new Post(3, "제목3", "내용3");
+        Post post4 = new Post(4, "제목4", "내용4");
+        Post post5 = new Post(5, "제목5", "내용5");
+        List<Post> posts = new ArrayList<>();
+        posts.add(post1);
+        posts.add(post2);
+        posts.add(post3);
+        posts.add(post4);
+        posts.add(post5);
 
-    @GetMapping("/post")
-    public String search(String title) {
-        return "주세요 title : " + title;
+        model.addAttribute("posts", posts);
+        return "post/list";
     }
 
-    // http://localhost:8000/post
-    // body : title=제목1&content=내용1
-    // header : Content-Type : application/x-www-form-urlencoded
-    // 뭘 줘야함 - body O
-    // request.getParameter() 메서드가 스프링 기본 파싱 전략
-    @PostMapping("/post")
-    public String post(String title, String content) {
-        return "줄께요 : title : " + title + ", content : " + content;
+    @GetMapping("/post/detail")
+    public String detail(Model model) {
+
+        // 1. DB에 연결해서 SELECT 해야함.
+        // 2. ResultSet을 JavaObject로 변경
+        Post post = new Post(1, "제목1", "내용1");
+
+        model.addAttribute("post", post);
+
+        return "post/detail";
     }
 
-    // UPDATE post SET title = ?, content = ? WHERE id = ?
-    // title, content (primary key : id)
-    // 뭘 줘야함 - body O
-    // API 문서
-    @PutMapping("/post/{id}")
-    public String put(String title, String content, @PathVariable int id) {
-        return "수정해주세요 : title : " + title + ", content : " + content + ", id : " + id;
-    }
-
-    // http://localhost:8000/post?title=제목1
-    // DELETE FROM post WHERE title = ?
-
-    // http://localhost:8000/post/1
-    // DELETE FROM post WHERE id =?
-    // 구체적으로 삭제 - body X
-    @DeleteMapping("/post/{id}")
-    public String delete(@PathVariable int id) {
-        return "삭제해주세요 : id : " + id;
-    }
 }
